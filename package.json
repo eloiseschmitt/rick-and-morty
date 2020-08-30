@@ -1,0 +1,14 @@
+{
+  "name": "rick-et-morty",
+  "version": "1.0.0",
+  "description": "Une appli pour rechercher un personnage, un lieu ou un épisode de Rick et Morty",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eloïse Schmitt",
+  "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "^1.7.5"
+  }
+}
