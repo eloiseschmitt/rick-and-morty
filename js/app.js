@@ -85,5 +85,5 @@ function getCharachterResults(datasReturned) {
     pFour.textContent = location.name;
     divSeven.appendChild(pFour);
 
-    document.querySelector('card-character').appendChild(divOne);
+    document.querySelector('.card-character').appendChild(divOne);
 }
