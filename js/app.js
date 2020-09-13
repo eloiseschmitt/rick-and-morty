@@ -1,89 +1,81 @@
-// Replace ./data.json with your JSON feed
-fetch('https://rickandmortyapi.com/api/character')
-  .then((response) => {
-    return response.json()
-  })
-  .then((data) => {
-    // Work with JSON data here
-    console.log(data)
-    data.results.forEach(result => {
-        getCharachterResults(result);
-    });
-    
+const apiUrl = 'https://rickandmortyapi.com/api/character';
+const charactersInfos = [];
+const infosSupp = [];
+
+fetch(apiUrl)
+  .then((blob) => blob.json())
+  .then((datas) => {
+    console.log(datas);
+
+    charactersInfos.push(...datas.results);
+    infosSupp.puch(...datas.info);
+
   })
   .catch((err) => {
     // Do something for an error here
+  });
+
+const searchInput = document.querySelector('#username');
+
+searchInput.addEventListener('change', displayMatches);
+searchInput.addEventListener('keyup', displayMatches);
+
+const resultDiv = document.querySelector('.card-character');
+
+function findMatches(research) {
+  return charactersInfos.filter(character => {
+    const regex = new RegExp(research, 'gi');
+    //Ajouter épisodes
+    if (character.name.match(regex) || character.location.name.match(regex)) {
+      return character;
+    }
   })
+}
 
-// Get a character results
-function getCharachterResults(datasReturned) {
-    let listOfEpisodes = datasReturned.episode;
-    let image = datasReturned.image;
-    let location = datasReturned.location;
-    let name = datasReturned.name;
-    let specie = datasReturned.species;
+function displayMatches() {
+  const matchArray = findMatches(this.value);
+  const html = matchArray.map(match => {
+    const listOfEpisodes = match.episode;
+    const image = match.image;
+    const location = match.location;
+    const name = match.name;
+    const specie = match.species;
 
-    // Create a card div for each result (7 div, 4 p, 1 ul, li(s)):
-    let divOne = document.createElement('DIV');
-    divOne.classList.add('max-w-sm', 'w-full', 'lg:max-w-full', 'lg:flex');
+    let liListOfEpisodes;
 
-    let divTwo = document.createElement('DIV');
-    divTwo.classList.add('h-48', 'lg:h-auto', 'lg:w-48', 'flex-none', 'bg-cover', 'rounded-t', 'lg:rounded-t-none', 'lg:rounded-l', 'text-center', 'overflow-hidden', 'img-character');
-    divTwo.setAttribute('style', 'background-image: url(' + image + ')');
-    divOne.appendChild(divTwo);
-
-    let divThree = document.createElement('DIV');
-    divThree.classList.add('border-r', 'border-b', 'border-l', 'border-gray-400', 'lg:border-l-0', 'lg:border-t', 'lg:border-gray-400', 'bg-white', 'rounded-b', 'lg:rounded-b-none', 'lg:rounded-r', 'p-4', 'flex', 'flex-col', 'justify-between', 'leading-normal');
-    divOne.appendChild(divThree);
-
-    let divFour = document.createElement('DIV');
-    divFour.classList.add('mb-5');
-    divThree.appendChild(divFour);
-
-    let divFive = document.createElement('DIV');
-    divFive.classList.add('text-gray-900', 'font-bold', 'text-xl', 'name-character');
-    divFive.textContent = name;
-    divFour.appendChild(divFive);
-
-    let pOne = document.createElement('P');
-    pOne.classList.add('text-gray-700', 'text-base', 'text-sm', 'specie-characte');
-    pOne.textContent = specie;
-    divFour.appendChild(pOne);
-
-    let divSix = document.createElement('DIV');
-    divSix.classList.add('flex', 'items-center');
-    divThree.appendChild(divSix);
-
-    let divSeven = document.createElement('DIV');
-    divSeven.classList.add('text-sm');
-    divSix.appendChild(divSeven);
-
-    let pTwo = document.createElement('P');
-    pTwo.classList.add('text-gray-900', 'leading-none');
-    let textpTwo = document.createTextNode('Liste des épisodes : ');
-    pTwo.appendChild(textpTwo);
-    divSeven.appendChild(pTwo);
-
-    let ulOne = document.createElement('UL');
-    ulOne.classList.add('episodes-character');
-    divSeven.appendChild(ulOne);
-    for(let i = 0 ; i < 5 ; i++) {
-        let li = document.createElement('LI');
-        let textLi = document.createTextNode(listOfEpisodes[i]);
-        li.appendChild(textLi);
-        ulOne.appendChild(li);
+    for (let i = 0; i < listOfEpisodes.length && i < 5; i++) {
+      liListOfEpisodes += `
+        <li> ${listOfEpisodes[i]} </li>
+      `
     };
 
-    let pThree = document.createElement('P');
-    pThree.classList.add('text-gray-900', 'leading-none', 'mt-5');
-    let textpThree = document.createTextNode('Lieu de vie : ');
-    pThree.appendChild(textpThree);
-    divSeven.appendChild(pThree);
+    return `
+      <div class="max-w-sm w-full lg:max-w-full lg:flex">
+        <div class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden img-character"
+          style="background-image: url( ${image} )">
+        </div>
+        <div class="border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal">
+          <div class="mb-5">
+            <div class="text-gray-900 font-bold text-xl name-character">
+              ${name}
+            </div>
+            <p class="text-gray-700 text-base text-sm specie-character"> ${specie} </p>
+          </div>
+          <div class="flex items-center">
+            <div class="text-sm">
+              <p class="text-gray-900 leading-none">Liste des épisodes : </p>
+              <ul class="episodes-character">
+                ${liListOfEpisodes}
+              </ul>
+              <p class="text-gray-900 leading-none mt-5">Lieu de vie : </p>
+              <p> ${location.name} </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-    let pFour = document.createElement('P');
-    pFour.classList.add('locations-character');
-    pFour.textContent = location.name;
-    divSeven.appendChild(pFour);
+  resultDiv.innerHTML = html;
 
-    document.querySelector('.card-character').appendChild(divOne);
 }
