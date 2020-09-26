@@ -2,25 +2,20 @@ const apiUrl = 'https://rickandmortyapi.com/api/character';
 const charactersInfos = [];
 const infosSupp = [];
 
-fetch(apiUrl)
-  .then((blob) => blob.json())
-  .then((datas) => {
-    console.log(datas);
 
+$.get(apiUrl, function(datas) {
     charactersInfos.push(...datas.results);
-    infosSupp.push(...datas.info);
+})
+.fail(function() {
+    console.warn('error');
+})
 
-  })
-  .catch((err) => {
-    console.warn(err);
-  });
+const searchInput = $('#username');
 
-const searchInput = document.querySelector('#username');
+searchInput.change(displayMatches);
+searchInput.keyup(displayMatches);
 
-searchInput.addEventListener('change', displayMatches);
-searchInput.addEventListener('keyup', displayMatches);
-
-const resultDiv = document.querySelector('.card-character');
+const resultDiv = $('.card-character');
 
 function findMatches(research) {
   return charactersInfos.filter(character => {
@@ -76,6 +71,6 @@ function displayMatches() {
     `;
   }).join('');
 
-  resultDiv.innerHTML = html;
+  resultDiv.html(html);
 
 }
